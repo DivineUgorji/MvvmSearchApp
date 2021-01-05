@@ -11,7 +11,7 @@ import xyz.divineugorji.mvvmsearchapp.R
 import xyz.divineugorji.mvvmsearchapp.data.UnsplashPhoto
 import xyz.divineugorji.mvvmsearchapp.databinding.ItemUnsplashPhotoBinding
 
-class UnsplashPhotoAdapter : PagingDataAdapter<UnsplashPhoto,
+class UnsplashPhotoAdapter(private val listener: OnItemClickListener) : PagingDataAdapter<UnsplashPhoto,
         UnsplashPhotoAdapter.photoViewHoder>(PHOTO_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): photoViewHoder {
@@ -29,8 +29,23 @@ class UnsplashPhotoAdapter : PagingDataAdapter<UnsplashPhoto,
         }
     }
 
-    class photoViewHoder(private val binding: ItemUnsplashPhotoBinding) :
+    inner class photoViewHoder(private val binding: ItemUnsplashPhotoBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            binding.root.setOnClickListener {
+                    val position = bindingAdapterPosition
+                    if (position != RecyclerView.NO_POSITION){
+                        val item = getItem(position)
+                        if (item != null){
+                            listener.onItemClick(item)
+                        }
+                    }
+
+            }
+        }
+
+
 
         fun bind(photo: UnsplashPhoto) {
             binding.apply {
@@ -44,6 +59,11 @@ class UnsplashPhotoAdapter : PagingDataAdapter<UnsplashPhoto,
                 textViewUserName.text = photo.user.username
             }
         }
+
+    }
+
+    interface OnItemClickListener{
+        fun onItemClick(photo: UnsplashPhoto)
     }
 
     companion object {
